@@ -1,0 +1,118 @@
+#IMPORT ECOD domains
+CREATE INDEX ON :Domain(domainID);
+CREATE CONSTRAINT ON (d:Domain) ASSERT d.uid IS UNIQUE;
+CREATE CONSTRAINT ON (g:Group) ASSERT g.type IS UNIQUE;
+CREATE CONSTRAINT ON (p:PDBEntry) ASSERT p.id IS UNIQUE;
+CREATE CONSTRAINT ON (hid:HierachyID) ASSERT hid.id IS UNIQUE;
+CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.type IS UNIQUE;
+CREATE CONSTRAINT ON (pdbchain:PDBChain) ASSERT pdbchain.id IS UNIQUE;
+CREATE CONSTRAINT ON (arch:Arch) ASSERT arch.type IS UNIQUE;
+
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/ecod.ready.latest.domains_part1.txt'
+AS line FIELDTERMINATOR '\t'
+WITH split(line.Fgroup, ',') AS FGROUPS,
+[
+ pdbchain IN (split(line.pdbRES, ','))|
+  [
+   line.pdbID+"."+toString(split(pdbchain, ':')[0]),
+   [res IN split(split(pdbchain, ':')[1], '-')| res]
+  ]
+ ]
+AS PDBCHAINRES, line
+
+MERGE (d:Domain {uid: toInt(line.uid), domainID: line.domainID, status: line.status, assemblyStatus: line.assemblyStatus})
+
+FOREACH (l IN (CASE WHEN line.ligands <> 'NO_LIGANDS_4A' THEN split(line.ligands, ',') ELSE [] END)|
+MERGE (lig:Ligand {type: l})
+CREATE (d)-[:BINDS]->(lig)
+)
+
+FOREACH (fgroup IN FGROUPS|
+MERGE (f:Group {type: fgroup})
+CREATE (d)-[:BELONGS {type:'Fgroup'}]->(f)
+)
+
+MERGE (pdbentry:PDBEntry {id: line.pdbID})
+
+FOREACH ( sub IN PDBCHAINRES|
+MERGE (pdbchain:PDBChain {id: sub[0]})
+CREATE UNIQUE (pdbchain)-[:SUBCHAIN]->(pdbentry)
+CREATE UNIQUE (d)-[:MATCHES {res: sub[1]}]->(pdbchain)
+)
+
+MERGE (arch:Arch {type: line.arch})
+MERGE (x:Group {type: line.Xgroup})
+MERGE (h:Group {type: line.Hgroup})
+MERGE (t:Group {type: line.Tgroup})
+MERGE (hierachyID:HierachyID {id: line.hierachyID})
+
+CREATE (d)-[:BELONGS {type:'arch'}]->(arch)
+CREATE (d)-[:BELONGS {type:'Xgroup'}]->(x)
+CREATE (d)-[:BELONGS {type:'Hgroup'}]->(h)
+CREATE (d)-[:BELONGS {type:'Tgroup'}]->(t)
+CREATE (d)-[:BELONGS {type:'HierachyID'}]->(hierachyID);
+
+#FIX residue mapping
+MATCH (d:Domain)-[r:MATCHES]-(c:PDBChain) WHERE 3=LENGTH(r.res) SET r.res=[-1*toint(r.res[1]),toint(r.res[2])] RETURN r;
+
+#Add group type label to groups
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/ecod.ready.latest.domains_part1.txt'
+AS line FIELDTERMINATOR '\t'
+WITH split(line.Fgroup, ',') AS FGROUPS, line
+
+FOREACH (fgroup IN FGROUPS|
+MATCH (f:Group {type: fgroup})
+SET f:FGroup
+)
+
+MATCH (x:Group {type: line.Xgroup})
+MATCH (h:Group {type: line.Hgroup})
+MATCH (t:Group {type: line.Tgroup})
+
+SET x:XGroup
+SET h:HGroup
+SET t:TGroup;
+
+#FIX ARCH Hierachy
+MATCH (f:FGroup)-[b1:BELONGS]-(d:Domain)-[b2:BELONGS]-(t:TGroup) CREATE UNIQUE (f)-[:BELONGS {type: "TGroup"}]->(t) DELETE b2;
+
+
+#Import pdb chain to uniprot mapping from pdbsws
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/pdb_uniprot_chain_map.lst.2'
+AS line FIELDTERMINATOR ','
+WITH line
+MATCH (c:PDBChain {id: line.pdb+"."+line.chain})
+
+MERGE (u:Uniprot {accession: line.uniprot})
+CREATE (c)-[:MAP]->(u);
+
+#Import pdbchain to uniprot mapping from ebi SIFTS
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/pdb_chain_uniprot.csv'
+AS line FIELDTERMINATOR ','
+WITH line
+MATCH (c:PDBChain {id: line.PDB+"."+line.CHAIN})
+
+MERGE (u:Uniprot {accession: line.SP_PRIMARY})
+CREATE (c)-[:MAP]->(u);
+
+
+//RETURN [pdbchain IN (split(line.pdbRES, ','))|[subchain IN (split(pdbchain, ':'))|subchain]] AS result
+
+//WITH split(line.pdbRES, ',') AS PDBRES
+//WITH [pdbchain IN PDBRES| split(pdbchain, ':')] AS temp
+//RETURN [tmp IN temp| split(tmp[1], '-')] AS result
+
+//MERGE (d:Domain {uid: toInt(line.uid), domainID: line.domainID, status: line.status, chainID: line.chainID, pdbRES: PDBRES, assemblyStatus: line.assemblyStatus})
+
+USING PERIODIC COMMIT 100 LOAD CSV FROM '/home/lab/Downloads/ecod.ready.latest.domains.txt' AS line FIELDTERMINATOR '\t' CREATE (d:domain {uid: toInt(line.uid), domainID: line.domainID, status: line.status, hierachyID: line.hierachyID, pdbID: line.pdbID, chainID: line.chainID, assemblyStatus: line.assemblyStatus});
+
+
+
+LOAD CSV FROM '/home/lab/Downloads/ecod.ready.latest.domains.txt' AS line FIELDTERMINATOR '\t'
+  AS line
+WITH line LIMIT 4
+RETURN line
