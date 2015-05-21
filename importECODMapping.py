@@ -62,7 +62,7 @@ def getUNPResMap(row, dom2unpMap):
             dom2unpMap[row['uid']][unp].append(resarr)
 
 def generateHeaders():
-    return {'Authorization': base64.encode(NEO4J_USER_PASS),
+    return {'Authorization': base64.b64encode(NEO4J_USER_PASS),
             'Accept': 'application/json; charset=UTF-8',
             'Content-Type': 'application/json'}
 
@@ -88,11 +88,11 @@ def createMappings(mapdict, trans_location):
     for domain_uid in mapdict['chain'].keys():
         statments_arr = []
         for pdbchain_id in mapdict['chain'][domain_uid]:
-            pdb_statment = pdb_statment.substitute(domain_uid=domain_uid, pdbchain_id=pdbchain_id,
+            pdb_statment = pdb_template.substitute(domain_uid=domain_uid, pdbchain_id=pdbchain_id,
                                                    res=mapdict['chain'][domain_uid][pdbchain_id])
             statments_arr.push({'statement': pdb_statment})
         for unp_acc in mapdict['unp'][domain_uid]:
-            unp_statment = unp_statment.substitue(domain_uid=domain_uid, unp_acc=unp_acc,
+            unp_statment = unp_template.substitue(domain_uid=domain_uid, unp_acc=unp_acc,
                                                   res=mapdict['unp'][domain_uid][unp_acc])
             statments_arr.push({'statement': unp_statment})
         statements_dict = {'statements': statments_arr}
