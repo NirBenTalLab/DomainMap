@@ -17,8 +17,8 @@ def parse_args():
     parser.add_argument("-src", "--source", help="Source file with SCOPE IDs", type=file, required=True)
     # parser.add_argument("-csvdst", "--csv_destination", help="CSV mapping file destination", type=argparse.FileType('w'),
     #                    required=True)
-    parser.add_argument("-dst", "--destination", help="Mapping file destination", type=argparse.FileType('w'),
-                        required=True)
+    # parser.add_argument("-dst", "--destination", help="Mapping file destination", type=argparse.FileType('w'),
+    #                     required=True)
     args = parser.parse_args()
     return args
 
@@ -36,9 +36,9 @@ def build_domMap(csv_reader):
     dom2chainMap = {}
     dom2unpMap = {}
     for row in csv_reader:
-        dom2chainMap[row['uid']] = dom2chainMap[row['uid']] if dom2chainMap[row['uid']] else {}
+        dom2chainMap[row['uid']] = dom2chainMap[row['uid']] if row['uid'] in dom2chainMap else {}
         getPdbChainResMap(row, dom2chainMap)
-        dom2unpMap[row['uid']] = dom2chainMap[row['uid']] if dom2chainMap[row['uid']] else {}
+        dom2unpMap[row['uid']] = dom2unpMap[row['uid']] if row['uid'] in dom2unpMap else {}
         getUNPResMap(row, dom2unpMap)
     return {'chain': dom2chainMap, 'unp': dom2unpMap}
 
@@ -47,16 +47,16 @@ def getPdbChainResMap(row, dom2chainMap):
     for chainres in chainresarr:
         chain,res = chainres.split(':')
         pdbchain = row['ecod_domain_id'][1:4]+chain
-        dom2chainMap[row['uid']][pdbchain] = dom2chainMap[row['uid']][pdbchain] if dom2chainMap[row['uid']][pdbchain] else []
+        dom2chainMap[row['uid']][pdbchain] = dom2chainMap[row['uid']][pdbchain] if pdbchain in dom2chainMap[row['uid']] else []
         resarr = res.rsplit('-',1)
         if resarr not in dom2chainMap[row['uid']][pdbchain]:
             dom2chainMap[row['uid']][pdbchain].append(resarr)
 
 def getUNPResMap(row, dom2unpMap):
     unp = row['unp_acc']
-    unp_res_arr = row['unp_range'].split('','')
+    unp_res_arr = row['unp_range'].split('-')
     for unp_res in unp_res_arr:
-        dom2unpMap[row['uid']][unp] = dom2unpMap[row['uid']][unp] if dom2unpMap[row['uid']][unp] else []
+        dom2unpMap[row['uid']][unp] = dom2unpMap[row['uid']][unp] if unp in dom2unpMap[row['uid']] else []
         resarr = unp_res.rsplit('-',1)
         if resarr not in dom2unpMap[row['uid']][unp]:
             dom2unpMap[row['uid']][unp].append(resarr)
@@ -97,3 +97,6 @@ def createMappings(mapdict, trans_location):
             statments_arr.push({'statement': unp_statment})
         statements_dict = {'statements': statments_arr}
         r = requests.post(trans_location, headers=generateHeaders(),data=json.dumps(statements_dict))
+
+if __name__ == "__main__":
+    main()
