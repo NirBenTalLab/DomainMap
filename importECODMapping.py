@@ -89,12 +89,12 @@ def createMappings(mapdict, trans_location):
         statments_arr = []
         for pdbchain_id in mapdict['chain'][domain_uid]:
             pdb_statment = pdb_template.substitute(domain_uid=domain_uid, pdbchain_id=pdbchain_id,
-                                                   res=mapdict['chain'][domain_uid][pdbchain_id])
-            statments_arr.push({'statement': pdb_statment})
+                                                   pdb_res=mapdict['chain'][domain_uid][pdbchain_id])
+            statments_arr.append({'statement': pdb_statment})
         for unp_acc in mapdict['unp'][domain_uid]:
-            unp_statment = unp_template.substitue(domain_uid=domain_uid, unp_acc=unp_acc,
-                                                  res=mapdict['unp'][domain_uid][unp_acc])
-            statments_arr.push({'statement': unp_statment})
+            unp_statment = unp_template.substitute(domain_uid=domain_uid, unp_acc=unp_acc,
+                                                  unp_res=mapdict['unp'][domain_uid][unp_acc])
+            statments_arr.append({'statement': unp_statment})
         statements_dict = {'statements': statments_arr}
         r = requests.post(trans_location, headers=generateHeaders(),data=json.dumps(statements_dict))
 
