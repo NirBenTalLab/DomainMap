@@ -1,57 +1,104 @@
 #IMPORT ECOD domains
-CREATE INDEX ON :Domain(domainID);
-CREATE CONSTRAINT ON (d:Domain) ASSERT d.uid IS UNIQUE;
-CREATE CONSTRAINT ON (g:Group) ASSERT g.type IS UNIQUE;
-CREATE CONSTRAINT ON (p:PDBEntry) ASSERT p.id IS UNIQUE;
-CREATE CONSTRAINT ON (hid:HierachyID) ASSERT hid.id IS UNIQUE;
-CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.type IS UNIQUE;
-CREATE CONSTRAINT ON (pdbchain:PDBChain) ASSERT pdbchain.id IS UNIQUE;
-CREATE CONSTRAINT ON (arch:Arch) ASSERT arch.type IS UNIQUE;
+CREATE INDEX ON :Domain(domainID)
+CREATE CONSTRAINT ON (d:Domain) ASSERT d.uid IS UNIQUE
+CREATE CONSTRAINT ON (g:XGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (g:HGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (g:TGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (g:FGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (p:PDBEntry) ASSERT p.id IS UNIQUE
+
+CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.type IS UNIQUE
+CREATE CONSTRAINT ON (pdbchain:PDBChain) ASSERT pdbchain.id IS UNIQUE
+CREATE CONSTRAINT ON (arch:ArchGroup) ASSERT arch.type IS UNIQUE
+CREATE CONSTRAINT ON (u:UniprotEntry) ASSERT u.accession IS UNIQUE
 
 USING PERIODIC COMMIT 100
-LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/ecod.ready.latest.domains_part1.txt'
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.develop86.domains.txt" 
 AS line FIELDTERMINATOR '\t'
-WITH split(line.Fgroup, ',') AS FGROUPS,
+WITH split(line.F_group, ',') AS FGROUPS,
 [
- pdbchain IN (split(line.pdbRES, ','))|
+ pdbchain IN (split(line.PDB_residue_range, ','))|
   [
-   line.pdbID+"."+toString(split(pdbchain, ':')[0]),
+   line.PDB_id+"."+toString(split(pdbchain, ':')[0]),
    [res IN split(split(pdbchain, ':')[1], '-')| res]
   ]
  ]
 AS PDBCHAINRES, line
 
-MERGE (d:Domain {uid: toInt(line.uid), domainID: line.domainID, status: line.status, assemblyStatus: line.assemblyStatus})
+MERGE (d:Domain {uid: toInt(line.Uid), domainID: line.Domain_id, status: line.Representative_status, assemblyStatus: line.Assembly_status})
 
-FOREACH (l IN (CASE WHEN line.ligands <> 'NO_LIGANDS_4A' THEN split(line.ligands, ',') ELSE [] END)|
+FOREACH (l IN (CASE WHEN line.Ligands = 'NO_LIGANDS_4A' THEN [] WHEN line.Ligands = 'NA' THEN [] ELSE split(line.Ligands, ',') END)|
 MERGE (lig:Ligand {type: l})
-CREATE (d)-[:BINDS]->(lig)
+CREATE UNIQUE (d)-[:BINDS]->(lig)
 )
+
+MERGE (t:TGroup:Architecture {type: line.T_group})
+
+MERGE (h:HGroup:Architecture {type: CASE WHEN line.H_group = 'NO_H_NAME' THEN "H grouping of "+t.type ELSE line.H_group END})
+
+MERGE (x:XGroup:Architecture {type: CASE WHEN line.X_group = 'NO_X_NAME' THEN "X grouping of "+h.type ELSE line.X_group END})
+
+MERGE (arch:ArchGroup:Architecture {type: line.Architecture})
 
 FOREACH (fgroup IN FGROUPS|
-MERGE (f:Group {type: fgroup})
-CREATE (d)-[:BELONGS {type:'Fgroup'}]->(f)
+MERGE (f:FGroup {type: fgroup})
+CREATE UNIQUE (d)-[:BELONGS {type:'FGroup'}]->(f)
+CREATE UNIQUE (f)-[:BELONGS {type: 'TGroup'}]->(t)
 )
 
-MERGE (pdbentry:PDBEntry {id: line.pdbID})
+CREATE UNIQUE (t)-[:BELONGS {type: 'HGroup'}]->(h)
+CREATE UNIQUE (h)-[:BELONGS {type: 'XGroup'}]->(x)
+CREATE UNIQUE (x)-[:BELONGS {type: 'ArchGroup'}]->(arch)
+
+MERGE (pdbentry:PDBEntry {id: line.PDB_id})
 
 FOREACH ( sub IN PDBCHAINRES|
 MERGE (pdbchain:PDBChain {id: sub[0]})
 CREATE UNIQUE (pdbchain)-[:SUBCHAIN]->(pdbentry)
-CREATE UNIQUE (d)-[:MATCHES {res: sub[1]}]->(pdbchain)
-)
+);
 
-MERGE (arch:Arch {type: line.arch})
-MERGE (x:Group {type: line.Xgroup})
-MERGE (h:Group {type: line.Hgroup})
-MERGE (t:Group {type: line.Tgroup})
-MERGE (hierachyID:HierachyID {id: line.hierachyID})
+#Map domains to pdbchains and uniprot
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.develop84a.uniprot_map.txt" 
+AS line FIELDTERMINATOR '\t'
+WITH 
+[
+ pdbchain IN (split(line.pdb_range, ','))|
+  [
+   substring(line.ecod_domain_id,1,4)+"."+toString(split(pdbchain, ':')[0]),
+    CASE left(split(pdbchain, ':')[1])
+      WHEN '-' THEN
+        res_str = substring(split(pdbchain, ':')[1],1)
+        [res IN res_str.split('-') | toInt(res)] AS tmp_res
+        temp_res[0] = -1 * temp_res[0]
+      ELSE
+        [res IN split(split(pdbchain, ':')[1], '-')|  toInt(res)]
+      END
+  ]
+ ] AS PDBCHAINRES, 
+[
+ unpres IN (split(line.unp_range, ','))|
+  [res IN split(unpres,'-')| toInt(res)]
+] AS UNPRES,
+line
 
-CREATE (d)-[:BELONGS {type:'arch'}]->(arch)
-CREATE (d)-[:BELONGS {type:'Xgroup'}]->(x)
-CREATE (d)-[:BELONGS {type:'Hgroup'}]->(h)
-CREATE (d)-[:BELONGS {type:'Tgroup'}]->(t)
-CREATE (d)-[:BELONGS {type:'HierachyID'}]->(hierachyID);
+UNWIND PDBCHAINRES AS chainres
+MATCH (d:Domain {uid: toInt(line.uid)}), (c:PDBChain {id: chainres[0]}) 
+CREATE (d)-[:MATCHES {res: chainres[1]}]->(c)
+
+UNWIND PDBCHAINRES AS chainres
+MATCH (c:PDBChain {id: chainres[0]}), (u:UniprotEntry {accession:  line.unp_acc})
+UNWIND UNPRES AS unpres
+CREATE (c)-[:MATCHES {res: unpres}]->(u);
+
+MATCH (d:Domain {uid: toInt(line.uid)}),(c:PDBChain {id: PDBCHAINRES[0]})
+SET r.res = PDBCHAINRES[1]
+MERGE (u:UniprotEntry {accession: line.unp_acc})
+CREATE (c)-[:MATCHES {res: split(line.unp_range,'-')}]->(u);
+
+
+
+
 
 #FIX residue mapping
 MATCH (d:Domain)-[r:MATCHES]-(c:PDBChain) WHERE 3=LENGTH(r.res) SET r.res=[-1*toint(r.res[1]),toint(r.res[2])] RETURN r;
@@ -116,3 +163,57 @@ LOAD CSV FROM '/home/lab/Downloads/ecod.ready.latest.domains.txt' AS line FIELDT
   AS line
 WITH line LIMIT 4
 RETURN line
+
+#Get Single Path to Top Level Arch.
+MATCH (d:Domain)-[:BINDS]-(l:Ligand {type: "CA"}),(a:ArchGroup) 
+WITH d, COLLECT(a) as archs 
+UNWIND archs AS arch 
+MATCH p=shortestPath((d)-[:BELONGS*]-(arch)) WITH p ORDER BY length(p) 
+RETURN COLLECT(p)[0] AS path;
+
+#Find Parent
+MATCH (d:Domain)-[:BINDS]-(l:Ligand {type: "CA"}),(d)-[:BELONGS*]->(a) WHERE not(a-[:BELONGS]->()) RETURN DISTINCT a;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.develop84a.uniprot_map.txt" 
+AS line FIELDTERMINATOR '\t'
+WITH 
+[
+ pdbchain IN (split(line.pdb_range, ','))|
+  [
+   substring(line.ecod_domain_id,1,4)+"."+toString(split(pdbchain, ':')[0]),
+    CASE left(split(pdbchain, ':')[1],1)
+      WHEN '-' THEN
+        extract(res IN split(substring(split(pdbchain, ':')[1],1), '-')| toInt(res)) AS temp_res
+        temp_res[0] = -1*temp_res[0]
+      ELSE
+        [res IN split(split(pdbchain, ':')[1], '-')|  toInt(res)]
+      END
+  ]
+ ] AS PDBCHAINRES, 
+[
+ unpres IN (split(line.unp_range, ','))|
+  [res IN split(unpres,'-')| toInt(res)]
+] AS UNPRES,
+line LIMIT 25
+
+UNWIND PDBCHAINRES AS chainres
+RETURN chainres[0], chainres[1];
