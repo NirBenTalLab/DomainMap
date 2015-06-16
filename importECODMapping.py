@@ -5,6 +5,7 @@ import argparse
 import requests
 import json
 import base64
+import re
 from string import Template
 
 NEO4J_CREATE_TRAN_URL = "http://localhost:7474/db/data/transaction"
@@ -35,11 +36,12 @@ def main():
 def build_domMap(csv_reader):
     dom2chainMap = {}
     dom2unpMap = {}
+    pattern = re.compile('[0-9]+\-[0-9]+')
     for row in csv_reader:
         dom2chainMap[row['uid']] = dom2chainMap[row['uid']] if row['uid'] in dom2chainMap else {}
         getPdbChainResMap(row, dom2chainMap)
         dom2unpMap[row['uid']] = dom2unpMap[row['uid']] if row['uid'] in dom2unpMap else {}
-        getUNPResMap(row, dom2unpMap)
+        getUNPResMap(row, dom2unpMap, pattern)
     return {'chain': dom2chainMap, 'unp': dom2unpMap}
 
 def getPdbChainResMap(row, dom2chainMap):
@@ -52,10 +54,12 @@ def getPdbChainResMap(row, dom2chainMap):
         if resarr not in dom2chainMap[row['uid']][pdbchain]:
             dom2chainMap[row['uid']][pdbchain].append(resarr)
 
-def getUNPResMap(row, dom2unpMap):
+def getUNPResMap(row, dom2unpMap, pattern):
     unp = row['unp_acc']
-    unp_res_arr = row['unp_range'].split('-')
+    unp_res_arr = row['unp_range'].split(',')
     for unp_res in unp_res_arr:
+        if pattern.match(unp_res) == None:
+            print(row['uid']+'\n')
         dom2unpMap[row['uid']][unp] = dom2unpMap[row['uid']][unp] if unp in dom2unpMap[row['uid']] else []
         resarr = unp_res.rsplit('-',1)
         if resarr not in dom2unpMap[row['uid']][unp]:

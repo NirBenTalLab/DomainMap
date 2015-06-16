@@ -22,7 +22,7 @@ NEO4J_USER_PASS = 'neo4j:Sheshi6'
 
 def main():
     args = parse_args()
-    source = args.source
+    source = args.ecod_source
     # csv_destination = args.csv_destination
     # destination = args.destination
     csv_reader = csv.DictReader(source, delimiter="\t")
@@ -54,7 +54,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Import ECOD to pdb and uniprot mapping.")
     # exclusive_group = parser.add_mutually_exclusive_group(required=True)
     # batch_group = exclusive_group.add_argument_group("Batch processing", "description")
-    parser.add_argument("-src", "--source", help="Source file with SCOPE IDs", type=file, required=True)
+    parser.add_argument("-ecod_src", "--ecod_source", help="Source file with ECOD IDs", type=file, required=True)
+    parser.add_argument("-pdb_unp_map", "--pdb_unp_mapping", help="Source file with PDB to UNP residue mapping", type=file, required=True)
     # parser.add_argument("-csvdst", "--csv_destination", help="CSV mapping file destination", type=argparse.FileType('w'),
     #                    required=True)
     # parser.add_argument("-dst", "--destination", help="Mapping file destination", type=argparse.FileType('w'),
