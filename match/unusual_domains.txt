@@ -1,0 +1,383 @@
+2, e3toxF1, Rossmann-like order found: 321-456
+4, e1xkqD1, Rossmann-like order found: 321-456
+0, e3toxG1, Rossmann-like order found: 321-456
+7, e1xkqC1, Rossmann-like order found: 321-456
+6, e1spxA1, Rossmann-like order found: 321-456
+1, e3toxI1, Rossmann-like order found: 321-456
+5, e1xkqA1, Rossmann-like order found: 321-456
+3, e3toxE1, Rossmann-like order found: 321-456
+9, e2qq5A2, Rossmann-like order found: 321-456
+11, e1xhlB1, Rossmann-like order found: 321-456
+12, e1xhlA1, Rossmann-like order found: 321-456
+14, e1edzA1, Un rossmann-like order found: 213-456
+8, e3toxA1, Rossmann-like order found: 321-456
+15, e4b4uB1, Un rossmann-like order found: 213-456
+13, e4b4uA1, Un rossmann-like order found: 213-456
+10, e1xkqB1, Rossmann-like order found: 321-456
+16, e4a5oC1, Un rossmann-like order found: 213-456
+17, e3ngxA1, Un rossmann-like order found: 213-456
+18, e3nglC1, Un rossmann-like order found: 213-456
+21, e4b4wA3, Un rossmann-like order found: 213-456
+22, e4b4vA3, Un rossmann-like order found: 213-456
+20, e3ngxB1, Un rossmann-like order found: 213-456
+19, e4a5oB1, Un rossmann-like order found: 213-456
+23, e4b4vB3, Un rossmann-like order found: 213-456
+24, e1ee9A1, Un rossmann-like order found: 213-456
+25, e4b4wB3, Un rossmann-like order found: 213-456
+30, e1b0aA1, Un rossmann-like order found: 213-456
+26, e3nglA1, Un rossmann-like order found: 213-456
+28, e3l07A1, Un rossmann-like order found: 213-456
+31, e1dibA1, Un rossmann-like order found: 213-456
+27, e3p2oA1, Un rossmann-like order found: 213-456
+29, e4a26A1, Un rossmann-like order found: 213-456
+32, e4a5oD1, Un rossmann-like order found: 213-456
+35, e3l07B1, Un rossmann-like order found: 213-456
+34, e3p2oB1, Un rossmann-like order found: 213-456
+33, e4a26B1, Un rossmann-like order found: 213-456
+37, e2c2xA1, Un rossmann-like order found: 213-456
+36, e2c2yA1, Un rossmann-like order found: 213-456
+38, e2c2xB1, Un rossmann-like order found: 213-456
+39, e4a5oA1, Un rossmann-like order found: 213-456
+40, e1a4iA1, Un rossmann-like order found: 213-456
+43, e1digB1, Un rossmann-like order found: 213-456
+44, e1diaA1, Un rossmann-like order found: 213-456
+42, e1digA1, Un rossmann-like order found: 213-456
+45, e1dibB1, Un rossmann-like order found: 213-456
+41, e1a4iB1, Un rossmann-like order found: 213-456
+46, e1diaB1, Un rossmann-like order found: 213-456
+47, e4cjxA2, Un rossmann-like order found: 213-456
+48, e4cjxB2, Un rossmann-like order found: 213-456
+49, e3t4xA1, Rossmann-like order found: 321-456
+51, e3t4xB1, Rossmann-like order found: 321-456
+50, e3pk0D1, Rossmann-like order found: 321-456
+53, e3toxC1, Rossmann-like order found: 321-456
+52, e3toxB1, Rossmann-like order found: 321-456
+54, e3toxD1, Rossmann-like order found: 321-456
+55, e3pk0A1, Rossmann-like order found: 321-456
+56, e3pk0B1, Rossmann-like order found: 321-456
+57, e3pk0C1, Rossmann-like order found: 321-456
+58, e4j9vB4, Rossmann-like order found: 321-456
+60, e4g65A1, Rossmann-like order found: 321-456
+59, e4gx0D2, Rossmann-like order found: 321-456
+62, e4gvlC3, Rossmann-like order found: 321-456
+61, e4gvlB3, Rossmann-like order found: 321-456
+64, e4gvlD3, Rossmann-like order found: 321-456
+63, e4j9vB3, Rossmann-like order found: 321-456
+65, e3fwzA1, Rossmann-like order found: 321-456
+68, e3llvA1, Rossmann-like order found: 321-456
+66, e1lnqA3, Rossmann-like order found: 321-456
+67, e2fy8G2, Rossmann-like order found: 321-456
+70, e2fy8E2, Rossmann-like order found: 321-456
+69, e1lnqC3, Rossmann-like order found: 321-456
+71, e3kxdA2, Rossmann-like order found: 321-456
+73, e3l4bA1, Rossmann-like order found: 321-456
+74, e3l4bC1, Rossmann-like order found: 321-456
+72, e3c85A1, Rossmann-like order found: 321-456
+77, e1lnqB3, Rossmann-like order found: 321-456
+75, e2fy8D2, Rossmann-like order found: 321-456
+76, e2fy8B2, Rossmann-like order found: 321-456
+78, e1lnqH3, Rossmann-like order found: 321-456
+80, e2fy8C2, Rossmann-like order found: 321-456
+79, e1lnqG3, Rossmann-like order found: 321-456
+81, e1lnqD3, Rossmann-like order found: 321-456
+85, e2hmwB1, Rossmann-like order found: 321-456
+82, e1lnqE3, Rossmann-like order found: 321-456
+84, e1lnqF3, Rossmann-like order found: 321-456
+83, e2fy8F2, Rossmann-like order found: 321-456
+86, e2hmsC1, Rossmann-like order found: 321-456
+88, e2hmtB1, Rossmann-like order found: 321-456
+87, e1lssA1, Rossmann-like order found: 321-456
+89, e1lssC1, Rossmann-like order found: 321-456
+90, e1lssD1, Rossmann-like order found: 321-456
+91, e2fy8A2, Rossmann-like order found: 321-456
+92, e2fy8H2, Rossmann-like order found: 321-456
+93, e1lssB1, Rossmann-like order found: 321-456
+94, e2hmtA1, Rossmann-like order found: 321-456
+96, e1lsuB1, Rossmann-like order found: 321-456
+95, e2hmsB1, Rossmann-like order found: 321-456
+97, e2hmuB1, Rossmann-like order found: 321-456
+98, e2hmsD1, Rossmann-like order found: 321-456
+101, e2hmuA1, Rossmann-like order found: 321-456
+99, e2hmsA1, Rossmann-like order found: 321-456
+100, e2hmvB1, Rossmann-like order found: 321-456
+103, e1id1B1, Rossmann-like order found: 321-456
+104, e2hmvA1, Rossmann-like order found: 321-456
+102, e1id1A1, Rossmann-like order found: 321-456
+106, e2hmwA1, Rossmann-like order found: 321-456
+105, e1lsuA1, Rossmann-like order found: 321-456
+108, e4gvlA2, Rossmann-like order found: 321-456
+107, e4g65B4, Rossmann-like order found: 321-456
+110, e2g1uA1, Rossmann-like order found: 321-456
+109, e4gvlA1, Rossmann-like order found: 321-456
+112, e4gx0D1, Rossmann-like order found: 321-456
+111, e4j7cB1, Rossmann-like order found: 321-456
+114, e4gx1D3, Rossmann-like order found: 321-456
+113, e4j9uG4, Rossmann-like order found: 321-456
+115, e4g65A5, Rossmann-like order found: 321-456
+117, e4gx0A3, Rossmann-like order found: 321-456
+116, e4gx1A3, Rossmann-like order found: 321-456
+118, e4gx2A3, Rossmann-like order found: 321-456
+119, e4gx5D3, Rossmann-like order found: 321-456
+120, e4gx2D3, Rossmann-like order found: 321-456
+121, e4gvlB4, Rossmann-like order found: 321-456
+122, e4gvlC4, Rossmann-like order found: 321-456
+123, e4gx5A3, Rossmann-like order found: 321-456
+126, e4gx5A2, Rossmann-like order found: 321-456
+125, e4gx5D2, Rossmann-like order found: 321-456
+124, e4gvlD4, Rossmann-like order found: 321-456
+127, e4gx1A2, Rossmann-like order found: 321-456
+128, e4gx1D2, Rossmann-like order found: 321-456
+130, e4gx2A2, Rossmann-like order found: 321-456
+129, e4gx0A2, Rossmann-like order found: 321-456
+131, e4l74B2, Rossmann-like order found: 321-456
+133, e4l75E2, Rossmann-like order found: 321-456
+132, e4gx2D2, Rossmann-like order found: 321-456
+134, e4l75C2, Rossmann-like order found: 321-456
+136, e4j91A3, Rossmann-like order found: 321-456
+138, e4j90B3, Rossmann-like order found: 321-456
+139, e4j7cH3, Rossmann-like order found: 321-456
+140, e4j90A3, Rossmann-like order found: 321-456
+141, e4j7cD3, Rossmann-like order found: 321-456
+142, e4j7cF3, Rossmann-like order found: 321-456
+143, e4j7cA3, Rossmann-like order found: 321-456
+144, e4j7cE3, Rossmann-like order found: 321-456
+145, e4j7cG3, Rossmann-like order found: 321-456
+147, e4j91B3, Rossmann-like order found: 321-456
+148, e4j91C3, Rossmann-like order found: 321-456
+146, e4j7cC3, Rossmann-like order found: 321-456
+149, e4j91D3, Rossmann-like order found: 321-456
+150, e4gx0C20, Rossmann-like order found: 321-456
+151, e3fwzB1, Rossmann-like order found: 321-456
+152, e3c85D1, Rossmann-like order found: 321-456
+153, e3l4bD2, Rossmann-like order found: 321-456
+156, e2aemA2, Rossmann-like order found: 321-456
+154, e3l4bE1, Rossmann-like order found: 321-456
+155, e3rbzA1, Rossmann-like order found: 321-456
+157, e3c85C1, Rossmann-like order found: 321-456
+158, e3c85B1, Rossmann-like order found: 321-456
+161, e3rbxC2, Rossmann-like order found: 321-456
+159, e3rbxA2, Rossmann-like order found: 321-456
+160, e3rbxB2, Rossmann-like order found: 321-456
+162, e3rbxD2, Rossmann-like order found: 321-456
+164, e3l4bG2, Rossmann-like order found: 321-456
+163, e3l4bH1, Rossmann-like order found: 321-456
+167, e3rbzD3, Rossmann-like order found: 321-456
+165, e3l4bB1, Rossmann-like order found: 321-456
+166, e3l4bF1, Rossmann-like order found: 321-456
+168, e4j9uG1, Rossmann-like order found: 321-456
+170, e3rbxE2, Rossmann-like order found: 321-456
+169, e4g65B3, Rossmann-like order found: 321-456
+173, e3rbzC3, Rossmann-like order found: 321-456
+172, e3rbzB3, Rossmann-like order found: 321-456
+171, e3rbxF2, Rossmann-like order found: 321-456
+174, e2aejA3, Rossmann-like order found: 321-456
+177, e4l74A3, Rossmann-like order found: 321-456
+176, e4ei2D3, Rossmann-like order found: 321-456
+175, e4ei2J3, Rossmann-like order found: 321-456
+179, e2aefA3, Rossmann-like order found: 321-456
+178, e4ei2N3, Rossmann-like order found: 321-456
+180, e4l76D3, Rossmann-like order found: 321-456
+182, e4ei2M3, Rossmann-like order found: 321-456
+181, e4ei2E3, Rossmann-like order found: 321-456
+184, e4ei2I3, Rossmann-like order found: 321-456
+183, e4ei2C3, Rossmann-like order found: 321-456
+185, e4j9uH5, Rossmann-like order found: 321-456
+186, e4j9uF9, Rossmann-like order found: 321-456
+187, e4l75D3, Rossmann-like order found: 321-456
+190, e2aefB3, Rossmann-like order found: 321-456
+189, e4ei2B3, Rossmann-like order found: 321-456
+192, e2aejB3, Rossmann-like order found: 321-456
+188, e4j9uE5, Rossmann-like order found: 321-456
+191, e3kxdB3, Rossmann-like order found: 321-456
+194, e4gx5B20, Rossmann-like order found: 321-456
+193, e4gx2C20, Rossmann-like order found: 321-456
+195, e4gx5C20, Rossmann-like order found: 321-456
+196, e4j9vA5, Rossmann-like order found: 321-456
+198, e4gx1B20, Rossmann-like order found: 321-456
+197, e4gx1C20, Rossmann-like order found: 321-456
+200, e3ic5B1, Rossmann-like order found: 321-456
+201, e3ic5A2, Rossmann-like order found: 321-456
+199, e4gx0B20, Rossmann-like order found: 321-456
+202, e4gx2B3, Rossmann-like order found: 321-456
+204, e4l76A2, Rossmann-like order found: 321-456
+203, e4gx2B2, Rossmann-like order found: 321-456
+205, e4l76B2, Rossmann-like order found: 321-456
+207, e4l73A2, Rossmann-like order found: 321-456
+206, e4l76E2, Rossmann-like order found: 321-456
+208, e4l73B2, Rossmann-like order found: 321-456
+209, e4l75B2, Rossmann-like order found: 321-456
+210, e4l75A2, Rossmann-like order found: 321-456
+211, e4j9uF10, Rossmann-like order found: 321-456
+212, e4j9uH6, Rossmann-like order found: 321-456
+213, e4j9uE6, Rossmann-like order found: 321-456
+216, e4j9vA6, Rossmann-like order found: 321-456
+215, e4gx5C21, Rossmann-like order found: 321-456
+214, e4gx5B21, Rossmann-like order found: 321-456
+217, e4gx1B21, Rossmann-like order found: 321-456
+218, e4gx1C21, Rossmann-like order found: 321-456
+219, e4gx0C21, Rossmann-like order found: 321-456
+220, e4gx2C21, Rossmann-like order found: 321-456
+221, e4gx0B21, Rossmann-like order found: 321-456
+225, e4ei2F3, Rossmann-like order found: 321-456
+226, e4ei2O3, Rossmann-like order found: 321-456
+227, e4ei2G3, Rossmann-like order found: 321-456
+228, e4ei2K3, Rossmann-like order found: 321-456
+230, e4l76C3, Rossmann-like order found: 321-456
+231, e2oguA3, Rossmann-like order found: 321-456
+232, e4ei2P3, Rossmann-like order found: 321-456
+233, e4l76F3, Rossmann-like order found: 321-456
+234, e4ei2L3, Rossmann-like order found: 321-456
+235, e4ei2H3, Rossmann-like order found: 321-456
+236, e4l75F3, Rossmann-like order found: 321-456
+237, e4ei2A3, Rossmann-like order found: 321-456
+238, e3o8qB1, Rossmann-like order found: 321-456
+239, e3o8qA1, Rossmann-like order found: 321-456
+240, e3sefC1, Rossmann-like order found: 321-456
+241, e2gptA2, Un rossmann-like order found: 213-456
+242, e2o7qA2, Rossmann-like order found: 321-456
+243, e2o7sA2, Rossmann-like order found: 321-456
+244, e1npdB1, Rossmann-like order found: 321-456
+245, e1npyA1, Rossmann-like order found: 321-456
+247, e3pwzA1, Rossmann-like order found: 321-456
+246, e1p74A1, Rossmann-like order found: 321-456
+248, e3donA1, Rossmann-like order found: 321-456
+249, e3fbtB1, Rossmann-like order found: 321-456
+250, e1vi2A1, Rossmann-like order found: 321-456
+251, e3t4eA1, Rossmann-like order found: 321-456
+252, e1npdA1, Rossmann-like order found: 321-456
+253, e1o9bA1, Rossmann-like order found: 321-456
+254, e1o9bB1, Rossmann-like order found: 321-456
+255, e2hk9D1, Rossmann-like order found: 321-456
+256, e3tozB1, Rossmann-like order found: 321-456
+257, e3tozA1, Rossmann-like order found: 321-456
+258, e3tozC1, Rossmann-like order found: 321-456
+259, e3tozE1, Rossmann-like order found: 321-456
+260, e3tozD1, Rossmann-like order found: 321-456
+261, e3tozG1, Rossmann-like order found: 321-456
+262, e3tozF1, Rossmann-like order found: 321-456
+263, e3tozH1, Rossmann-like order found: 321-456
+264, e3tnlB1, Rossmann-like order found: 321-456
+265, e3tnlD1, Rossmann-like order found: 321-456
+266, e3tnlC1, Rossmann-like order found: 321-456
+267, e1nvtA1, Rossmann-like order found: 321-456
+268, e1nvtB1, Rossmann-like order found: 321-456
+270, e2hk9B1, Rossmann-like order found: 321-456
+271, e2hk8H1, Un rossmann-like order found: 213-456
+272, e2hk9C1, Rossmann-like order found: 321-456
+273, e2hk8B1, Un rossmann-like order found: 213-456
+274, e2hk8C1, Un rossmann-like order found: 213-456
+275, e2hk7B1, Rossmann-like order found: 321-456
+276, e2hk8A1, Un rossmann-like order found: 213-456
+277, e2hk8F1, Un rossmann-like order found: 213-456
+278, e2hk8G1, Un rossmann-like order found: 213-456
+279, e2hk8D1, Un rossmann-like order found: 213-456
+280, e2hk8E1, Un rossmann-like order found: 213-456
+281, e2eggA1, Rossmann-like order found: 321-456
+282, e2hk7A1, Un rossmann-like order found: 213-456
+283, e2hk9A2, Rossmann-like order found: 321-456
+284, e3tnlA1, Rossmann-like order found: 321-456
+285, e3oj0A1, Rossmann-like order found: 321-456
+286, e3u62A2, Rossmann-like order found: 321-456
+287, e3pgjA1, Rossmann-like order found: 321-456
+288, e3sefA1, Rossmann-like order found: 321-456
+289, e3dooA1, Rossmann-like order found: 321-456
+290, e1nytA1, Rossmann-like order found: 321-456
+291, e3fbtD1, Rossmann-like order found: 321-456
+292, e1npyC1, Rossmann-like order found: 321-456
+293, e1npyB1, Rossmann-like order found: 321-456
+294, e1p74B1, Rossmann-like order found: 321-456
+295, e1npyD1, Rossmann-like order found: 321-456
+296, e1p77A1, Rossmann-like order found: 321-456
+297, e1vi2B1, Rossmann-like order found: 321-456
+298, e3t4eB1, Rossmann-like order found: 321-456
+299, e3fbtA1, Rossmann-like order found: 321-456
+300, e3fbtC1, Rossmann-like order found: 321-456
+301, e4omuB2, Rossmann-like order found: 321-456
+302, e4omuA1, Rossmann-like order found: 321-456
+303, e1nytC1, Rossmann-like order found: 321-456
+305, e1nytB1, Rossmann-like order found: 321-456
+306, e1nytD1, Rossmann-like order found: 321-456
+307, e3pgjB1, Rossmann-like order found: 321-456
+308, e3sefD1, Rossmann-like order found: 321-456
+309, e3sefB1, Rossmann-like order found: 321-456
+310, e3pgjD1, Rossmann-like order found: 321-456
+311, e3pgjC1, Rossmann-like order found: 321-456
+312, e1wxdA1, Rossmann-like order found: 321-456
+313, e3jypA1, Rossmann-like order found: 321-456
+314, e3jyqA1, Rossmann-like order found: 321-456
+315, e2d5cB1, Rossmann-like order found: 321-456
+316, e1wxdB1, Rossmann-like order found: 321-456
+317, e2cy0B1, Rossmann-like order found: 321-456
+318, e4p4nA1, Rossmann-like order found: 321-456
+319, e4p4nB2, Rossmann-like order found: 321-456
+320, e4p4lB2, Rossmann-like order found: 321-456
+321, e4p4lC1, Rossmann-like order found: 321-456
+322, e2nloA1, Rossmann-like order found: 321-456
+323, e4p4nC2, Rossmann-like order found: 321-456
+324, e3jyoA1, Rossmann-like order found: 321-456
+325, e2d5cA1, Rossmann-like order found: 321-456
+326, e2cy0A1, Rossmann-like order found: 321-456
+327, e2ev9B1, Rossmann-like order found: 321-456
+328, e4xijA1, Rossmann-like order found: 321-456
+329, e2ev9A1, Rossmann-like order found: 321-456
+330, e4p4gB2, Rossmann-like order found: 321-456
+331, e4p4gA2, Rossmann-like order found: 321-456
+332, e4p4lA1, Rossmann-like order found: 321-456
+333, e4n7rB3, Rossmann-like order found: 321-456
+334, e3ppiA1, Rossmann-like order found: 321-456
+335, e1wntC1, Rossmann-like order found: 321-456
+336, e3ppiD1, Rossmann-like order found: 321-456
+337, e3ppiB1, Rossmann-like order found: 321-456
+338, e3ppiC1, Rossmann-like order found: 321-456
+339, e1pr9A1, Rossmann-like order found: 321-456
+340, e1wntD1, Rossmann-like order found: 321-456
+341, e1pr9B1, Rossmann-like order found: 321-456
+342, e1wntA1, Rossmann-like order found: 321-456
+343, e1wntB1, Rossmann-like order found: 321-456
+344, e1cydB1, Rossmann-like order found: 321-456
+347, e1cydA1, Rossmann-like order found: 321-456
+348, e1cydD1, Rossmann-like order found: 321-456
+349, e1cydC1, Rossmann-like order found: 321-456
+350, e4g5hA1, Rossmann-like order found: 321-456
+351, e4j2oF1, Rossmann-like order found: 321-456
+352, e4j2oE1, Rossmann-like order found: 321-456
+353, e3vvbA1, Rossmann-like order found: 321-456
+354, e4j2oA1, Rossmann-like order found: 321-456
+355, e4j2oD1, Rossmann-like order found: 321-456
+356, e3vvcA1, Rossmann-like order found: 321-456
+357, e4j2oC1, Rossmann-like order found: 321-456
+358, e4j2oB2, Rossmann-like order found: 321-456
+359, e3w1vB1, Rossmann-like order found: 321-456
+360, e4tqgA1, Rossmann-like order found: 321-456
+361, e3w1vA1, Rossmann-like order found: 321-456
+362, e2gnaA1, Rossmann-like order found: 321-456
+363, e2gn9B1, Rossmann-like order found: 321-456
+364, e2gnaB1, Rossmann-like order found: 321-456
+365, e2gn8B1, Rossmann-like order found: 321-456
+366, e2gn9A1, Rossmann-like order found: 321-456
+367, e2gn6B1, Rossmann-like order found: 321-456
+368, e2gn8A1, Rossmann-like order found: 321-456
+369, e2gn4B1, Rossmann-like order found: 321-456
+370, e2gn6A1, Rossmann-like order found: 321-456
+371, e3pvzC1, Rossmann-like order found: 321-456
+372, e3pvzD1, Rossmann-like order found: 321-456
+373, e3pvzA2, Rossmann-like order found: 321-456
+374, e2gn4A1, Rossmann-like order found: 321-456
+375, e3pvzB1, Rossmann-like order found: 321-456
+376, e3c24A1, Un rossmann-like order found: 213-456
+377, e3c24B3, Un rossmann-like order found: 213-456
+378, e3dfuB2, Un rossmann-like order found: 213-456
+379, e3dfuA1, Un rossmann-like order found: 213-456
+380, e2g17A2, Rossmann-like order found: 321-456
+381, e2hjsA2, Rossmann-like order found: 321-456
+382, e3uw3A2, Rossmann-like order found: 321-456
+383, e3uw3B2, Rossmann-like order found: 321-456
+384, e3q0eB2, Rossmann-like order found: 321-456
+385, e4dpkB2, Rossmann-like order found: 321-456
+386, e2gz3B2, Rossmann-like order found: 321-456
+387, e2yv3A2, Rossmann-like order found: 321-456
+388, e2yv3B2, Un rossmann-like order found: 213-456
+389, e2qz9B2, Rossmann-like order found: 321-456
+390, e2qz9C2, Rossmann-like order found: 321-456
+391, e2r00C2, Rossmann-like order found: 321-456
+392, e2r00B4, Rossmann-like order found: 321-456
