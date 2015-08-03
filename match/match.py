@@ -62,7 +62,7 @@ def get_i_residue(residues, tag):
   for i, residue in enumerate(residues):
     if tag.lower() == get_tag(residue).lower():
       return i
-  raise "Can't find residue", tag
+  raise Exception("Can't find residue", tag)
   
   
 def get_superposable_atoms(polymer, segments, 

@@ -26,7 +26,7 @@ NEO4J_USER_PASS = 'neo4j:Sheshi6'
 PDB_UNP_MAP_URL = 'http://www.ebi.ac.uk/pdbe/api/mappings/uniprot/%s'
 PDB_OBSERVED_RANGES = 'http://www.ebi.ac.uk/pdbe/api/pdb/entry/polymer_coverage/%s'
 PDB_MUTATED_RESIDUES = 'http://www.ebi.ac.uk/pdbe/api/pdb/entry/mutated_AA_or_NA/%s'
-GET_PDB_IDS_NEO4J_STATEMENT = {'statements': [{'statement': "MATCH (a:XGroup)<-[:BELONGS*]-(d:Domain)-[r:MATCHES]-(c:PDBChain)-[:SUBCHAIN]-(p:PDBEntry) WHERE a.type =~ '(?i).*rossmann-like.*' RETURN DISTINCT d, r, c"}]}
+GET_PDB_IDS_NEO4J_STATEMENT = {'statements': [{'statement': "MATCH (a:XGroup)<-[:BELONGS*]-(d:Domain)-[r:MATCHES]-(c:PDBChain)-[:SUBCHAIN]-(p:PDBEntry) WHERE a.type =~ '(?i).*rossmann-like.*' RETURN d, r, c ORDER BY d.domainID"}]}
 PDBE_SS = 'http://www.ebi.ac.uk/pdbe/api/pdb/entry/secondary_structure/'
 ECOD_PDB_FILE = 'http://prodata.swmed.edu/ecod/complete/structure?id='
 
@@ -76,14 +76,15 @@ class betaSheetOrder(object):
 
         pdb_file = self.download_domain_pdb(self.domain["domainID"])
         if None == pdb_file:
-            print("Couldn't donwload pdb file for domain %s" % self.domain["domainID"], file=sys.stderr)
+            print("Couldn't download pdb file for domain %s" % self.domain["domainID"], file=sys.stderr)
             return None
         rmsd_1_3 = self.calculate_raw_rmsd(self.pdb_chain[5:6], pdb_file, strands[0], strands[2])
         rmsd_1_4 = self.calculate_raw_rmsd(self.pdb_chain[5:6], pdb_file, strands[0], strands[3])
+        rmsd_3_4 = self.calculate_raw_rmsd(self.pdb_chain[5:6], pdb_file, strands[2], strands[3])
         if (None == rmsd_1_3) or (None == rmsd_1_4):
             return None
         beta_strand_order = ""
-        if rmsd_1_3 < rmsd_1_4:
+        if (rmsd_1_3 <= rmsd_1_4) and (rmsd_3_4 <= rmsd_1_4):
             beta_strand_order = "Un rossmann-like order found: 213-456"
             print("%d, %s, %s" %(self.counter, self.domain["domainID"], beta_strand_order), file=sys.stdout)
             sys.stdout.flush()
@@ -104,15 +105,19 @@ class betaSheetOrder(object):
 
     @staticmethod
     def get_pdb_ss(pdb_id):
-        try:
-            pdbe_ss = requests.get(PDBE_SS+pdb_id, stream=False, timeout=10)
-            if 200 == pdbe_ss.status_code:
-                return pdbe_ss.json()
-            else:
-                print("couldn't download %s SS, status code: %s" %(pdb_id, pdbe_ss.status_code), file=sys.stderr)
-        except requests.exceptions.Timeout as e:
-            print(e, file=sys.stderr)
-            print("pdb_id %s hit timeout" % pdb_id, file=sys.stderr)
+        counter = 0
+        while counter<3:
+            try:
+                pdbe_ss = requests.get(PDBE_SS+pdb_id, stream=False, timeout=10)
+                if 200 == pdbe_ss.status_code:
+                    return pdbe_ss.json()
+                else:
+                    print("couldn't download %s SS, status code: %s" %(pdb_id, pdbe_ss.status_code), file=sys.stderr)
+                    counter+=1
+            except requests.exceptions.Timeout as e:
+                print(e, file=sys.stderr)
+                print("pdb_id %s hit timeout" % pdb_id, file=sys.stderr)
+                counter+=1
 
         return None
 
@@ -138,17 +143,21 @@ class betaSheetOrder(object):
     @staticmethod
     def download_domain_pdb(domain_id):
         local_filename = '/tmp/'+domain_id
-        try:
-            r = requests.get(ECOD_PDB_FILE+domain_id, stream=True)
-            with open(local_filename, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-                        f.flush()
-        except Exception as e:
-            print(e, file=sys.stderr)
-            print("Couldn't download pdb file for %s" % domain_id, file=sys.stderr)
-        return local_filename
+        counter = 0
+        while counter<3:
+            try:
+                r = requests.get(ECOD_PDB_FILE+domain_id, stream=True)
+                with open(local_filename, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=1024):
+                        if chunk:
+                            f.write(chunk)
+                            f.flush()
+                return local_filename
+            except Exception as e:
+                print(e, file=sys.stderr)
+                print("Couldn't download pdb file for %s" % domain_id, file=sys.stderr)
+                counter+=1
+        return None
 
     @staticmethod
     def calculate_raw_rmsd(chain_id,pdb_file, strand_1, strand_2):

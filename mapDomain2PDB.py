@@ -60,6 +60,11 @@ def create_mapping(domain_uid):
     res_mapping = {}
     xml_map = untangle.parse(ECOD_PDB_RES_MAP_URL % (domain_uid ,domain_uid))
 
+    # TODO:
+    # Mapping can be to the same chain but skip a few residues.
+    # In this case a new match needs to be created!
+    # See for example: http://prodata.swmed.edu/ecod/complete/domain/e3pymA2, http://prodata.swmed.edu/ecod/data/000147122/000147122.residues.xml
+    # The mapping is split at resdiue 149 to 323 :-(
     for residue in xml_map.domain_residue_doc.residue_list.residue:
         chain_id = residue['chain_id']
         seq_id = int(residue['seq_id'])
