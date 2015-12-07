@@ -1,0 +1,245 @@
+#Import Ligands
+
+CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.id IS UNIQUE
+
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.latest.domains.txt" 
+AS line FIELDTERMINATOR '\t'
+
+MATCH (d:ECODDomain {uid: toInt(line.uid)})
+
+FOREACH (l IN (CASE WHEN line.ligand = 'NO_LIGANDS_4A' THEN [] ELSE split(line.ligand, ',') END)|
+MERGE (lig:Ligand {id: l})
+CREATE UNIQUE (d)-[:BINDS]->(lig)
+);
+
+#Import ECOD arch names
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.latest.domains.txt" 
+AS line FIELDTERMINATOR '\t'
+
+MATCH (d:ECODDomain {uid: toInt(line.uid)})
+SET d.arch = line.arch_name;
+
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod_edges.dat" 
+AS line FIELDTERMINATOR ' '
+
+MATCH (d1:ECODDomain {id: line.domain1}),(d2:ECODDomain {id: line.domain2}) 
+
+MERGE (d1)-[:DISTANCE {id: toInt(line.key), psim: toInt(line.psim), pid: toInt(line.pid), length: toInt(line.len), rmsd: toFloat(line.rmsd)}]-(domain2);
+
+
+#Import distance matrix
+CREATE INDEX ON :DISTANCE(id)
+
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod_edges.dat" 
+AS line FIELDTERMINATOR ' '
+
+MATCH (domain1:ECODDomain {id: line.domain1}), (domain2:ECODDomain {id: line.domain2}) WHERE NOT (domain1)<-[:DISTANCE]-(domain2) WITH domain1, domain2, line
+CREATE UNIQUE (domain1)-[:DISTANCE {id: line.key, psim: line.psim, pid: line.pid, length: line.len, rmsd: line.rmsd}]->(domain2);
+
+
+#IMPORT ECOD domains
+CREATE INDEX ON :ECODDomain(id)
+CREATE CONSTRAINT ON (d:ECODDomain) ASSERT d.uid IS UNIQUE
+CREATE CONSTRAINT ON (g:XGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (g:HGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (g:TGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (g:FGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (p:PDBEntry) ASSERT p.id IS UNIQUE
+
+CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.type IS UNIQUE
+CREATE CONSTRAINT ON (pdbchain:PDBChain) ASSERT pdbchain.id IS UNIQUE
+CREATE CONSTRAINT ON (arch:ArchGroup) ASSERT arch.type IS UNIQUE
+CREATE CONSTRAINT ON (u:UniprotEntry) ASSERT u.accession IS UNIQUE
+
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.latest.domains.txt" 
+AS line FIELDTERMINATOR '\t'
+WITH 
+[
+ pdbchain IN (split(line.seqid_range, ','))|
+  [
+   line.pdb+"."+toString(split(pdbchain, ':')[0]),
+   [res IN split(split(pdbchain, ':')[1], '-')| res]
+  ]
+ ]
+AS PDBCHAINRES, line
+
+MERGE (d:ECODDomain {uid: toInt(line.uid), id: line.ecod_domain_id})
+
+MERGE (pdbentry:PDBEntry {id: line.pdb})
+
+FOREACH ( sub IN PDBCHAINRES|
+MERGE (pdbchain:PDBChain {id: sub[0]})
+CREATE UNIQUE (pdbchain)-[:SUBCHAIN]->(pdbentry)
+CREATE UNIQUE (d)-[:MAPPED {seqidStart: toInt(sub[1][0]), seqidEnd: toInt(sub[1][1])}]->(pdbchain)
+);
+
+#Map domains to pdbchains and uniprot
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.develop84a.uniprot_map.txt" 
+AS line FIELDTERMINATOR '\t'
+WITH 
+[
+ pdbchain IN (split(line.pdb_range, ','))|
+  [
+   substring(line.ecod_domain_id,1,4)+"."+toString(split(pdbchain, ':')[0]),
+    CASE left(split(pdbchain, ':')[1])
+      WHEN '-' THEN
+        res_str = substring(split(pdbchain, ':')[1],1)
+        [res IN res_str.split('-') | toInt(res)] AS tmp_res
+        temp_res[0] = -1 * temp_res[0]
+      ELSE
+        [res IN split(split(pdbchain, ':')[1], '-')|  toInt(res)]
+      END
+  ]
+ ] AS PDBCHAINRES, 
+[
+ unpres IN (split(line.unp_range, ','))|
+  [res IN split(unpres,'-')| toInt(res)]
+] AS UNPRES,
+line
+
+UNWIND PDBCHAINRES AS chainres
+MATCH (d:Domain {uid: toInt(line.uid)}), (c:PDBChain {id: chainres[0]}) 
+CREATE (d)-[:MATCHES {res: chainres[1]}]->(c)
+
+UNWIND PDBCHAINRES AS chainres
+MATCH (c:PDBChain {id: chainres[0]}), (u:UniprotEntry {accession:  line.unp_acc})
+UNWIND UNPRES AS unpres
+CREATE (c)-[:MATCHES {res: unpres}]->(u);
+
+MATCH (d:Domain {uid: toInt(line.uid)}),(c:PDBChain {id: PDBCHAINRES[0]})
+SET r.res = PDBCHAINRES[1]
+MERGE (u:UniprotEntry {accession: line.unp_acc})
+CREATE (c)-[:MATCHES {res: split(line.unp_range,'-')}]->(u);
+
+
+
+
+
+#FIX residue mapping
+MATCH (d:Domain)-[r:MATCHES]-(c:PDBChain) WHERE 3=LENGTH(r.res) SET r.res=[-1*toint(r.res[1]),toint(r.res[2])] RETURN r;
+
+#Add group type label to groups
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/ecod.ready.latest.domains_part1.txt'
+AS line FIELDTERMINATOR '\t'
+WITH split(line.Fgroup, ',') AS FGROUPS, line
+
+FOREACH (fgroup IN FGROUPS|
+MATCH (f:Group {type: fgroup})
+SET f:FGroup
+)
+
+MATCH (x:Group {type: line.Xgroup})
+MATCH (h:Group {type: line.Hgroup})
+MATCH (t:Group {type: line.Tgroup})
+
+SET x:XGroup
+SET h:HGroup
+SET t:TGroup;
+
+#FIX ARCH Hierachy
+MATCH (f:FGroup)-[b1:BELONGS]-(d:Domain)-[b2:BELONGS]-(t:TGroup) CREATE UNIQUE (f)-[:BELONGS {type: "TGroup"}]->(t) DELETE b2;
+
+
+#Import pdb chain to uniprot mapping from pdbsws
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/pdb_uniprot_chain_map.lst.2'
+AS line FIELDTERMINATOR ','
+WITH line
+MATCH (c:PDBChain {id: line.pdb+"."+line.chain})
+
+MERGE (u:Uniprot {accession: line.uniprot})
+CREATE (c)-[:MAP]->(u);
+
+#Import pdbchain to uniprot mapping from ebi SIFTS
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM 'file:///home/lab/Downloads/pdb_chain_uniprot.csv'
+AS line FIELDTERMINATOR ','
+WITH line
+MATCH (c:PDBChain {id: line.PDB+"."+line.CHAIN})
+
+MERGE (u:Uniprot {accession: line.SP_PRIMARY})
+CREATE (c)-[:MAP]->(u);
+
+
+//RETURN [pdbchain IN (split(line.pdbRES, ','))|[subchain IN (split(pdbchain, ':'))|subchain]] AS result
+
+//WITH split(line.pdbRES, ',') AS PDBRES
+//WITH [pdbchain IN PDBRES| split(pdbchain, ':')] AS temp
+//RETURN [tmp IN temp| split(tmp[1], '-')] AS result
+
+//MERGE (d:Domain {uid: toInt(line.uid), domainID: line.domainID, status: line.status, chainID: line.chainID, pdbRES: PDBRES, assemblyStatus: line.assemblyStatus})
+
+USING PERIODIC COMMIT 100 LOAD CSV FROM '/home/lab/Downloads/ecod.ready.latest.domains.txt' AS line FIELDTERMINATOR '\t' CREATE (d:domain {uid: toInt(line.uid), domainID: line.domainID, status: line.status, hierachyID: line.hierachyID, pdbID: line.pdbID, chainID: line.chainID, assemblyStatus: line.assemblyStatus});
+
+
+
+LOAD CSV FROM '/home/lab/Downloads/ecod.ready.latest.domains.txt' AS line FIELDTERMINATOR '\t'
+  AS line
+WITH line LIMIT 4
+RETURN line
+
+#Get Single Path to Top Level Arch.
+MATCH (d:Domain)-[:BINDS]-(l:Ligand {type: "CA"}),(a:ArchGroup) 
+WITH d, COLLECT(a) as archs 
+UNWIND archs AS arch 
+MATCH p=shortestPath((d)-[:BELONGS*]-(arch)) WITH p ORDER BY length(p) 
+RETURN COLLECT(p)[0] AS path;
+
+#Find Parent
+MATCH (d:Domain)-[:BINDS]-(l:Ligand {type: "CA"}),(d)-[:BELONGS*]->(a) WHERE not(a-[:BELONGS]->()) RETURN DISTINCT a;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/pdb_chain_uniprot.tsv"
+AS line  FIELDTERMINATOR '\t'
+WITH line LIMIT 15
+
+MATCH (c:PDBChain {id: line.PDB+"."+line.CHAIN})
+MERGE (sp:SWISSProt {id: line.SP_PRIMARY}) 
+CREATE UNIQUE (c)-[m:MAPPED {seqidStart: toInt(line.RES_BEG), seqidEnd: toInt(line.RES_END), spStart: toInt(line.SP_BEG), spEnd: toInt(line.SP_END)}]->(sp)
+RETURN c,m,sp;
+
+
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.develop84a.uniprot_map.txt" 
+AS line FIELDTERMINATOR '\t'
+WITH 
+[
+ pdbchain IN (split(line.pdb_range, ','))|
+  [
+   substring(line.ecod_domain_id,1,4)+"."+toString(split(pdbchain, ':')[0]),
+    CASE left(split(pdbchain, ':')[1],1)
+      WHEN '-' THEN
+        extract(res IN split(substring(split(pdbchain, ':')[1],1), '-')| toInt(res)) AS temp_res
+        temp_res[0] = -1*temp_res[0]
+      ELSE
+        [res IN split(split(pdbchain, ':')[1], '-')|  toInt(res)]
+      END
+  ]
+ ] AS PDBCHAINRES, 
+[
+ unpres IN (split(line.unp_range, ','))|
+  [res IN split(unpres,'-')| toInt(res)]
+] AS UNPRES,
+line LIMIT 25
+
+UNWIND PDBCHAINRES AS chainres
+RETURN chainres[0], chainres[1];
