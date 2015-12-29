@@ -1,25 +1,12 @@
 #!/usr/bin/env python2.7
-
 from __future__ import print_function
 import getopt
 import linecache
 import os
-import requests
-import json
-import base64
-from string import Template
-import argparse
-import csv
 from subprocess import call
-import untangle
-import subprocess
-from xml.sax import SAXParseException
-import ijson
-import string
-import multiprocessing
-import py2neo
 import re
 import sys
+import bsddb
 
 
 HHLIB_ENV = '/specific/a/home/cc/students/math/shlomoyakh/Documents/hhsuite-2.0.16/lib/hh'
@@ -53,9 +40,14 @@ def parse_hhalign(hhalign_result):
 
 
 def update_hhalign_csv(hhalign_result):
-    # with open(HHALIGN_CSV, 'a') as myfile:
-    #     myfile.write("%(query)d,%(template)d,%(prob)s,%(evalue)s,%(score)s,%(aligned_cols)s,%(identities)s,%(similarity)s,%(sum_probes)s" % hhalign_result)
-
+    #with open(HHALIGN_CSV, 'a') as myfile:
+    #    myfile.write("%(query)d,%(template)d,%(prob)s,%(evalue)s,%(score)s,%(aligned_cols)s,%(identities)s,%(similarity)s,%(sum_probes)s\n" % hhalign_result)
+    db = bsddb.hashopen(HHALIGN_CSV, 'c')
+    key = "%(query)d_%(template)d" % hhalign_result
+    value = "%(prob)s,%(evalue)s,%(score)s,%(aligned_cols)s,%(identities)s,%(similarity)s,%(sum_probes)s" % hhalign_result
+    db[key] = value
+    db.sync()
+    db.close()
 
 
 def main(argv):
@@ -71,9 +63,9 @@ def main(argv):
             print('hhalign_2_neo4j.py -i <queryUID> -t <templateUID>')
             sys.exit()
         elif opt in ("-i"):
-            query_uid = arg
+            query_uid = int(arg)
         elif opt in ("-t"):
-            template_uid = arg
+            template_uid = int(arg)
     if template_uid < 0 or query_uid < 0:
         print('hhalign_2_neo4j.py -i <queryUID> -t <templateUID>')
         sys.exit(2)
