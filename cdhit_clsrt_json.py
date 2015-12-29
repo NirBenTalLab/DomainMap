@@ -2,8 +2,9 @@ __author__ = 'lab'
 
 import json
 import re
+import csv
 
-with open('/home/lab/Code/cdhit/nr100.clstr', 'r') as file:
+with open('/home/lab/Downloads/ecod118/ecod.develop118.nr100.clstr', 'r') as file:
     cluster = {}
     for line in file:
         if line.startswith('>'):
@@ -18,5 +19,9 @@ with open('/home/lab/Code/cdhit/nr100.clstr', 'r') as file:
         if (line.find('*') != -1):
             cluster_rep.append(uid)
 
-with open('/home/lab/Code/cdhit/nr100.clstr.json', 'w') as file:
-    json.dump(cluster, file)
+with open('/home/lab/Downloads/ecod118/ecod.develop118.nr100.clstr.csv', 'w') as file:
+    # json.dump(cluster, file)
+    csv_writer = csv.DictWriter(file, fieldnames=['domain', 'cluster_rep'])
+    csv_writer.writeheader();
+    for domain, (rep) in cluster.iteritems():
+        csv_writer.writerow({'domain':domain, 'cluster_rep':rep[0]})

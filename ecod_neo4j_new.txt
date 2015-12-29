@@ -1,3 +1,86 @@
+#Import ECOD hierarchy
+CREATE CONSTRAINT ON (g:XGroup) ASSERT g.id IS UNIQUE
+CREATE CONSTRAINT ON (g:HGroup) ASSERT g.id IS UNIQUE
+CREATE CONSTRAINT ON (g:TGroup) ASSERT g.id IS UNIQUE
+CREATE CONSTRAINT ON (g:FGroup) ASSERT g.id IS UNIQUE
+CREATE CONSTRAINT ON (arch:ArchGroup) ASSERT arch.id IS UNIQUE
+
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod118/ecod.develop118.domains.lc.txt"
+AS line FIELDTERMINATOR '\t'
+
+MATCH (dom:ECODDomain) where dom.uid = toInt(line.uid)
+WITH dom, line
+MERGE (arch:ArchGroup:ArchClass {id:line.arch_name}) WITH arch, dom, line
+
+FOREACH (ignore IN CASE WHEN line.x_name <> 'no_x_name' THEN [1] ELSE [] END|
+  MERGE (xgroup:XGroup:ArchClass {id: line.x_name})
+  CREATE UNIQUE (arch)-[:SUBARCH]->(xgroup)
+  FOREACH (ignore IN CASE WHEN line.h_name <> 'no_h_name' THEN [1] ELSE [] END|
+    MERGE (hgroup:HGroup:ArchClass {id: line.h_name})
+    CREATE UNIQUE (xgroup)-[:SUBARCH]->(hgroup)
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (hgroup)-[:SUBARCH]->(tgroup)
+  )
+  FOREACH (ignore IN CASE WHEN line.h_name = 'no_h_name' THEN [1] ELSE [] END|
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (xgroup)-[:SUBARCH]->(tgroup)
+  )
+)
+
+FOREACH (ignore IN CASE WHEN line.x_name = 'no_x_name' THEN [1] ELSE [] END|
+  FOREACH (ignore IN CASE WHEN line.h_name <> 'no_h_name' THEN [1] ELSE [] END|
+    MERGE (hgroup:HGroup:ArchClass {id: line.h_name})
+    CREATE UNIQUE (arch)-[:SUBARCH]->(hgroup)
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (hgroup)-[:SUBARCH]->(tgroup)
+  )
+  FOREACH (ignore IN CASE WHEN line.h_name = 'no_h_name' THEN [1] ELSE [] END|
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (arch)-[:SUBARCH]->(tgroup)
+  )
+)
+
+FOREACH (f_name IN split(line.f_name, ',')|
+MERGE (tgroup:TGroup {id: line.t_name})
+MERGE (fgroup:FGroup:ArchClass {id: f_name})
+CREATE UNIQUE (tgroup)-[:SUBARCH]->(fgroup)
+CREATE UNIQUE (dom)-[:BELONGS]->(fgroup));
+
+#Not working - here for reference
+CASE WHEN line.x_name = 'no_x_name' THEN
+  CASE WHEN line.h_name = 'no_h_name' THEN
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (arch)-[:SUBARCH]->(tgroup)
+  ELSE
+    MERGE (hgroup:HGroup:ArchClass {id: line.h_name})
+    CREATE UNIQUE (arch)-[:SUBARCH]->(hgroup)
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (hgroup)-[:SUBARCH]->(tgroup)
+  END
+ELSE
+  MERGE (xgroup:XGroup:ArchClass {id: line.x_name})
+  CREATE UNIQUE (arch)-[:SUBARCH]->(xgroup)
+  CASE WHEN line.h_name = 'no_h_name' THEN
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (xgroup)-[:SUBARCH]->(tgroup)
+  ELSE
+    MERGE (hgroup:HGroup:ArchClass {id: line.h_name})
+    CREATE UNIQUE (xgroup)-[:SUBARCH]->(hgroup)
+    MERGE (tgroup:TGroup:ArchClass {id: line.t_name})
+    CREATE UNIQUE (hgroup)-[:SUBARCH]->(tgroup)
+  END
+END
+
+#Import clustering
+USING PERIODIC COMMIT 100
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod118/ecod.develop118.nr100.clstr.csv"
+AS line FIELDTERMINATOR ','
+
+MATCH (d:ECODDomain {uid: toInt(line.domain)}), (rep:ECODDomain {uid: toInt(line.cluster_rep)})
+WITH d, rep
+CREATE UNIQUE (d)-[:CLUSTER]->(rep);
+
 #Import Ligands
 
 CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.id IS UNIQUE
@@ -44,19 +127,18 @@ CREATE UNIQUE (domain1)-[:DISTANCE {id: line.key, psim: line.psim, pid: line.pid
 #IMPORT ECOD domains
 CREATE INDEX ON :ECODDomain(id)
 CREATE CONSTRAINT ON (d:ECODDomain) ASSERT d.uid IS UNIQUE
-CREATE CONSTRAINT ON (g:XGroup) ASSERT g.type IS UNIQUE
-CREATE CONSTRAINT ON (g:HGroup) ASSERT g.type IS UNIQUE
-CREATE CONSTRAINT ON (g:TGroup) ASSERT g.type IS UNIQUE
-CREATE CONSTRAINT ON (g:FGroup) ASSERT g.type IS UNIQUE
+CREATE CONSTRAINT ON (g:XGroup) ASSERT g.id IS UNIQUE
+CREATE CONSTRAINT ON (g:HGroup) ASSERT g.id IS UNIQUE
+CREATE CONSTRAINT ON (g:TGroup) ASSERT g.id IS UNIQUE
+CREATE CONSTRAINT ON (g:FGroup) ASSERT g.id IS UNIQUE
 CREATE CONSTRAINT ON (p:PDBEntry) ASSERT p.id IS UNIQUE
-
-CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.type IS UNIQUE
+CREATE CONSTRAINT ON (lig:Ligand) ASSERT lig.id IS UNIQUE
 CREATE CONSTRAINT ON (pdbchain:PDBChain) ASSERT pdbchain.id IS UNIQUE
-CREATE CONSTRAINT ON (arch:ArchGroup) ASSERT arch.type IS UNIQUE
-CREATE CONSTRAINT ON (u:UniprotEntry) ASSERT u.accession IS UNIQUE
+CREATE CONSTRAINT ON (arch:ArchGroup) ASSERT arch.id IS UNIQUE
+CREATE CONSTRAINT ON (u:UniprotEntry) ASSERT u.id IS UNIQUE
 
 USING PERIODIC COMMIT 100
-LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod.latest.domains.txt" 
+LOAD CSV WITH HEADERS FROM  "file:///home/lab/Downloads/ecod118/ecod.develop118.domains.lc.txt"
 AS line FIELDTERMINATOR '\t'
 WITH 
 [
@@ -70,11 +152,8 @@ AS PDBCHAINRES, line
 
 MERGE (d:ECODDomain {uid: toInt(line.uid), id: line.ecod_domain_id})
 
-MERGE (pdbentry:PDBEntry {id: line.pdb})
-
 FOREACH ( sub IN PDBCHAINRES|
 MERGE (pdbchain:PDBChain {id: sub[0]})
-CREATE UNIQUE (pdbchain)-[:SUBCHAIN]->(pdbentry)
 CREATE UNIQUE (d)-[:MAPPED {seqidStart: toInt(sub[1][0]), seqidEnd: toInt(sub[1][1])}]->(pdbchain)
 );
 
