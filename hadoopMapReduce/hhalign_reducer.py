@@ -67,7 +67,7 @@ def main(separator='\t'):
         try:
             # total_count = sum(int(count) for current_word, count in group)
             # print "%s%s%d" % (current_word, separator, total_count)
-            for templateuid in group:
+            for queryuid, templateuid in group:
                 hhalign_result = hhalign(queryuid, templateuid)
                 if parse_hhalign(hhalign_result):
                     print("%(query)d,%(template)d,%(prob)s,%(evalue)s,%(score)s,%(aligned_cols)s,%(identities)s,%(similarity)s,%(sum_probes)s\n" % hhalign_result)
